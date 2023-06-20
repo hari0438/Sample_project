@@ -1,0 +1,45 @@
+pipeline:
+  name: Sample pipeline
+  identifier: Sample_pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github
+        repoName: Sample_project
+        build: <+input>
+  stages:
+    - stage:
+        name: Dev
+        identifier: Dev
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: ArtifactoryUpload
+                  name: ArtifactoryUpload_1
+                  identifier: ArtifactoryUpload_1
+                  spec:
+                    connectorRef: sample_docker_connector_1687196548439
+                    target: https://github.com/hari0438/Sample_project/tree/master
+                    sourcePath: https://my.jfrog.com/subscriptions/444849479/dashboard
+        when:
+          pipelineStatus: Success
+        strategy:
+          parallelism: 2
+        failureStrategies:
+          - onFailure:
+              errors: []
+              action:
+                type: Retry
